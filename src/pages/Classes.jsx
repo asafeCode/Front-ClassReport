@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
 import api from "../api/api";
+import { useAuth } from "../contexts/AuthContext";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // para redirecionar
 
 export default function Classes() {
+  const {logout} = useAuth();
   const [classes, setClasses] = useState([]);
   const [loadingReport, setLoadingReport] = useState(null);
   const [error, setError] = useState("");
@@ -40,7 +42,6 @@ export default function Classes() {
 
       setSuccess("Recado gerado com sucesso!");
       setReportHtml(response.data);
-      console.log("Resposta /generate-report:", response.data);
     } catch (err) {
       if (err.response) {
         console.error("Erro response data:", err.response.data);
@@ -64,7 +65,7 @@ export default function Classes() {
 
   // Função de logout
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    logout();
     navigate("/login");
   };
 
