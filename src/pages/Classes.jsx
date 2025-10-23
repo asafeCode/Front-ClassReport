@@ -1,20 +1,21 @@
 import api from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // para redirecionar
+import { useNavigate } from "react-router-dom";
+import styles from "./Classes.styles";
 
 export default function Classes() {
-  const {logout} = useAuth();
+  const { logout } = useAuth();
   const [classes, setClasses] = useState([]);
   const [loadingReport, setLoadingReport] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [reportHtml, setReportHtml] = useState(""); // guarda o HTML gerado
+  const [reportHtml, setReportHtml] = useState("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get("/classes")
+     api.get("/classes")
       .then((res) => {
         setClasses(res.data.results);
       })
@@ -57,92 +58,83 @@ export default function Classes() {
 
   const handleCopyToClipboard = () => {
     if (reportHtml) {
-      navigator.clipboard.writeText(reportHtml)
+      navigator.clipboard
+        .writeText(reportHtml)
         .then(() => alert("Recado copiado para a área de transferência!"))
         .catch(() => alert("Falha ao copiar."));
     }
   };
 
-  // Função de logout
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      {/* Header com título e botão logout */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-        <h2 style={{ margin: 0 }}>Turmas do dia</h2>
+    <div style={styles.container}>
+      {/* HEADER */}
+      <header style={styles.header}>
+        <h1 style={styles.title}>Painel do Professor</h1>
         <button
+          style={styles.logoutBtn}
           onClick={handleLogout}
-          style={{
-            backgroundColor: "#cc0000",
-            color: "#fff",
-            border: "none",
-            padding: "8px 12px",
-            borderRadius: 5,
-            cursor: "pointer",
-          }}
+          onMouseOver={(e) => (e.target.style.background = styles.logoutBtnHover.background)}
+          onMouseOut={(e) => (e.target.style.background = styles.logoutBtn.background)}
         >
-          Logout
+          Sair
         </button>
+      </header>
+
+      {/* CARD PRINCIPAL */}
+      <div style={styles.card}>
+        <h2 style={styles.cardTitle}>Suas Turmas do Dia</h2>
+        <p style={styles.cardText}>
+          Aqui você pode gerar o recado de aula para enviar aos responsáveis
+          pelos alunos. Selecione uma turma e clique em{" "}
+          <strong>“Gerar Recado”</strong>.
+        </p>
+
+        {error && <p style={{ ...styles.message, ...styles.errorMsg }}>{error}</p>}
+        {success && <p style={{ ...styles.message, ...styles.successMsg }}>{success}</p>}
+
+        <ul style={styles.list}>
+          {Array.isArray(classes) && classes.length > 0 ? (
+            classes.map((c) => (
+              <li key={c.id} style={styles.listItem}>
+                <span style={{ fontWeight: 500 }}>{c.name}</span>
+                <button
+                  onClick={() => handleGenerateReport(c.id)}
+                  disabled={loadingReport === c.id}
+                  style={styles.generateBtn}
+                >
+                  {loadingReport === c.id ? "Gerando..." : "Gerar Recado"}
+                </button>
+              </li>
+            ))
+          ) : (
+            <p>Nenhuma turma encontrada.</p>
+          )}
+        </ul>
+
+        {reportHtml && (
+          <div style={styles.reportBox}>
+            <h3 style={styles.reportTitle}>Recado Gerado</h3>
+            <div
+              style={styles.reportOutput}
+              dangerouslySetInnerHTML={{ __html: reportHtml }}
+            />
+            <button onClick={handleCopyToClipboard} style={styles.copyBtn}>
+              Copiar Recado
+            </button>
+          </div>
+        )}
       </div>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
-
-      <ul>
-        {Array.isArray(classes) && classes.length > 0 ? (
-          classes.map((c) => (
-            <li key={c.id} style={{ marginBottom: 10 }}>
-              {c.name}
-              <button
-                onClick={() => handleGenerateReport(c.id)}
-                disabled={loadingReport === c.id}
-                style={{ marginLeft: 10, padding: "5px 10px", cursor: "pointer" }}
-              >
-                {loadingReport === c.id ? "Gerando..." : "Gerar Recado"}
-              </button>
-            </li>
-          ))
-        ) : (
-          <p>Nenhuma turma encontrada.</p>
-        )}
-      </ul>
-
-      {reportHtml && (
-        <div style={{ marginTop: 30, border: "1px solid #333", padding: 20, borderRadius: 5 }}>
-          <h3 style={{ color: "#fff" }}>Recado Gerado (HTML)</h3>
-          <div
-            style={{
-              whiteSpace: "pre-wrap",
-              backgroundColor: "#000",
-              color: "#fff",
-              padding: 10,
-              borderRadius: 5,
-              maxHeight: "300px",
-              overflowY: "auto",
-              border: "1px solid #444",
-            }}
-            dangerouslySetInnerHTML={{ __html: reportHtml }}
-          />
-          <button
-            onClick={handleCopyToClipboard}
-            style={{
-              marginTop: 10,
-              padding: "5px 10px",
-              cursor: "pointer",
-              backgroundColor: "#222",
-              color: "#fff",
-              border: "none",
-              borderRadius: 3,
-            }}
-          >
-            Copiar Recado
-          </button>
-        </div>
-      )}
+      {/* RODAPÉ */}
+      <footer style={styles.footer}>
+        © {new Date().getFullYear()} Sistema de Recados | Desenvolvido para
+        facilitar a comunicação entre professores e responsáveis.
+      </footer>
     </div>
   );
 }

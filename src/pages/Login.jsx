@@ -5,32 +5,25 @@ import { useAuth } from "../contexts/AuthContext";
 import styles from "../pages/Login.styles";
 import Button from "../components/Button";
 import InputField from "../components/InputField";
-import api from "../api/api";
+import {login as apiLogin} from "../api/authService";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const {login} = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
-    try {
-      const res = await api.post("/login", {
-        username: email,
-        password,
-      });
-
-      const { accessToken } = res.data;
-
+    try{
+      const accessToken = await apiLogin(email, password);
       if (accessToken) {
-        login(accessToken); // atualiza contexto e localStorage
-        navigate("/classes"); // redireciona automaticamente
+        login(accessToken);
+        navigate("/classes"); 
       } else {
         setError("Token inválido. Verifique suas credenciais.");
       }
@@ -70,15 +63,13 @@ export default function Login() {
                 required
               />
             </div>
-
-            <button type="submit" style={styles.button} disabled={loading}>
-              {loading ? "Entrando..." : "Entrar"}
-            </button>
-
+            <Button 
+              label="Entrar"
+              loading={loading}>
+              </Button>
             {error && <p style={styles.error}>{error}</p>}
           </form>
         </div>
-
         <div style={styles.rightPanel}>
           <h2 style={styles.welcome}>Olá, Seja Bem-Vindo!</h2>
           <p style={styles.text}>
@@ -89,5 +80,3 @@ export default function Login() {
     </div>
   );
 }
-
-// ...styles aqui (igual ao que você já tinha)

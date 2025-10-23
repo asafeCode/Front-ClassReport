@@ -1,12 +1,10 @@
 export default function Button({ 
-    label = "Button", 
-    onClick = () => {}, 
+    label = "", 
     loading = false 
 }){
   return (
     <button
       type="submit"
-      onClick={onClick}
       disabled={loading}
       style={{
         ...styles.button,
