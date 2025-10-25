@@ -2,7 +2,6 @@ import api from "../api/api";
 import { useAuth } from "../contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./Classes.styles";
 
 export default function Classes() {
   const { logout } = useAuth();
@@ -15,10 +14,9 @@ export default function Classes() {
   const navigate = useNavigate();
 
   useEffect(() => {
-     api.get("/classes")
-      .then((res) => {
-        setClasses(res.data.results);
-      })
+    api
+      .get("/classes")
+      .then((res) => setClasses(res.data.results))
       .catch((err) => console.error("Erro ao buscar turmas:", err));
   }, []);
 
@@ -29,26 +27,13 @@ export default function Classes() {
     setLoadingReport(classId);
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await api.post(
-        "/generate-report",
-        { classid: String(classId) },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
+      const response = await api.post("/generate-report", { classid: String(classId) });
       setSuccess("Recado gerado com sucesso!");
       setReportHtml(response.data);
     } catch (err) {
       if (err.response) {
-        console.error("Erro response data:", err.response.data);
         setError(`Erro: ${err.response.data.message || "400 Bad Request"}`);
       } else {
-        console.error(err);
         setError("Erro ao gerar o recado.");
       }
     } finally {
@@ -71,69 +56,70 @@ export default function Classes() {
   };
 
   return (
-    <div style={styles.container}>
-      {/* HEADER */}
-      <header style={styles.header}>
-        <h1 style={styles.title}>Painel do Professor</h1>
+    <div data-theme="dark" className="min-h-screen w-screen  flex flex-col items-center p-6 bg-linear-to-b from-blue-400 to-purple-900">
+      <header className="w-full max-w-5xl flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-10">
+        <h1 className="text-2xl font-bold text-center md:text-left text-white">Painel do Professor</h1>
         <button
-          style={styles.logoutBtn}
           onClick={handleLogout}
-          onMouseOver={(e) => (e.target.style.background = styles.logoutBtnHover.background)}
-          onMouseOut={(e) => (e.target.style.background = styles.logoutBtn.background)}
+          className="btn btn-soft btn-error bg-red-500 border-none text-white"
         >
           Sair
         </button>
       </header>
 
-      {/* CARD PRINCIPAL */}
-      <div style={styles.card}>
-        <h2 style={styles.cardTitle}>Suas Turmas do Dia</h2>
-        <p style={styles.cardText}>
-          Aqui você pode gerar o recado de aula para enviar aos responsáveis
-          pelos alunos. Selecione uma turma e clique em{" "}
-          <strong>“Gerar Recado”</strong>.
+      <div className="bg-base-100 text-base-content rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 w-full max-w-5xl transition-transform ">
+        <h2 className="text-[#4A00E0] text-xl font-bold mb-3">Suas Turmas do Dia</h2>
+        <p className="text-base-content mb-6 leading-relaxed">
+          Aqui você pode gerar o recado de aula para enviar aos responsáveis pelos alunos. 
+          Selecione uma turma e clique em <strong>“Gerar Recado”</strong>.
         </p>
 
-        {error && <p style={{ ...styles.message, ...styles.errorMsg }}>{error}</p>}
-        {success && <p style={{ ...styles.message, ...styles.successMsg }}>{success}</p>}
+        {error && <p className="text-red-500 font-medium mb-4">{error}</p>}
+        {success && <p className="text-green-500 font-medium mb-4">{success}</p>}
 
-        <ul style={styles.list}>
+        <ul className="flex flex-col gap-3">
           {Array.isArray(classes) && classes.length > 0 ? (
             classes.map((c) => (
-              <li key={c.id} style={styles.listItem}>
-                <span style={{ fontWeight: 500 }}>{c.name}</span>
+              <li
+                key={c.id}
+                className="bg-gray-100 hover:bg-gray-200 transition-all p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-3"
+              >
+                <span className="font-medium">{c.name}</span>
                 <button
                   onClick={() => handleGenerateReport(c.id)}
                   disabled={loadingReport === c.id}
-                  style={styles.generateBtn}
+                  className="btn bg-linear-to-r from-[#4A00E0] to-[#8E2DE2] border-none text-white rounded-full px-5 hover:opacity-90"
                 >
                   {loadingReport === c.id ? "Gerando..." : "Gerar Recado"}
                 </button>
               </li>
             ))
           ) : (
-            <p>Nenhuma turma encontrada.</p>
+            <p className="text-center text-base-content">Nenhuma turma encontrada.</p>
           )}
         </ul>
 
         {reportHtml && (
-          <div style={styles.reportBox}>
-            <h3 style={styles.reportTitle}>Recado Gerado</h3>
+          <div className="mt-8 bg-gray-50 border border-gray-200 rounded-xl p-5">
+            <h3 className="text-[#4A00E0] text-lg font-semibold mb-3">Recado Gerado</h3>
             <div
-              style={styles.reportOutput}
+              className="bg-black text-green-400 p-3 rounded-md max-h-72 overflow-y-auto font-mono text-sm whitespace-pre-wrap"
               dangerouslySetInnerHTML={{ __html: reportHtml }}
             />
-            <button onClick={handleCopyToClipboard} style={styles.copyBtn}>
+            <button
+              onClick={handleCopyToClipboard}
+              className="btn mt-4 bg-[#4A00E0] hover:bg-[#5A10F0] text-white border-none rounded-full px-5"
+            >
               Copiar Recado
             </button>
           </div>
         )}
       </div>
 
-      {/* RODAPÉ */}
-      <footer style={styles.footer}>
-        © {new Date().getFullYear()} Sistema de Recados | Desenvolvido para
-        facilitar a comunicação entre professores e responsáveis.
+       <footer className="footer pb-4 footer-center bg-transparent text-white fixed bottom-0">
+        <aside>
+          <p>Equipe Ctrl+Play Guarapari © {new Date().getFullYear()} - Gerador de Relatórios para Professores</p>
+        </aside>
       </footer>
     </div>
   );

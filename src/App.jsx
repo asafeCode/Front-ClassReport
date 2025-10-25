@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth, AuthProvider } from "./contexts/AuthContext";
 import Login from "./pages/Login";
 import Classes from "./pages/Classes";
+import "./App.css";
 
 function AppRoutes() {
   const { isLoggedIn } = useAuth();
