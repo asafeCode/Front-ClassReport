@@ -1,13 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { getToken, setToken as saveToken, clearToken } from "../utils/TokenStorage";
-
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [token, setTokenState] = useState(null);
 
   useEffect(() => {
-    const savedToken = getToken();
+    const savedToken = localStorage.getItem("token");
     if (savedToken) {
       setTokenState(savedToken);
     }
@@ -15,13 +13,13 @@ export function AuthProvider({ children }) {
 
   const login = (accessToken) => {
     if (accessToken) {
-      saveToken(accessToken);
+      localStorage.setItem("token", accessToken);
       setTokenState(accessToken);
     }
   };
 
   const logout = () => {
-    clearToken();
+    localStorage.removeItem("token");
     setTokenState(null);
   };
 
