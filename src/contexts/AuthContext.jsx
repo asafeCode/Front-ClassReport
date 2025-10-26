@@ -1,23 +1,32 @@
 import { createContext, useContext, useState, useEffect } from "react";
-
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setTokenState] = useState(null);
 
-  // Mantém token no localStorage
+  useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setTokenState(savedToken);
+    }
+  }, []);
+
   const login = (accessToken) => {
-    localStorage.setItem("token", accessToken);
-    setToken(accessToken);
+    if (accessToken) {
+      localStorage.setItem("token", accessToken);
+      setTokenState(accessToken);
+    }
   };
 
   const logout = () => {
     localStorage.removeItem("token");
-    setToken(null);
+    setTokenState(null);
   };
 
+  const isLoggedIn = Boolean(token);
+
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token, isLoggedIn, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

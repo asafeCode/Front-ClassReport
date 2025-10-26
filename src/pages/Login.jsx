@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaEnvelope, FaLock } from "react-icons/fa";
 import { useAuth } from "../contexts/AuthContext";
-import styles from "../pages/Login.styles";
-import Button from "../components/Button";
-import InputField from "../components/InputField";
-import api from "../api/api";
+import { login as apiLogin } from "../api/services/loginService.js";
+import ThemeToggle from "../components/themeChange.jsx";
+import InputEmail from "../components/inputEmail.jsx";
+import InputPassword from "../components/inputPassword.jsx";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,18 +18,11 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
-      const res = await api.post("/login", {
-        username: email,
-        password,
-      });
-
-      const { accessToken } = res.data;
-
+      const accessToken = await apiLogin(email, password);
       if (accessToken) {
-        login(accessToken); // atualiza contexto e localStorage
-        navigate("/classes"); // redireciona automaticamente
+        login(accessToken);
+        navigate("/classes");
       } else {
         setError("Token inválido. Verifique suas credenciais.");
       }
@@ -42,52 +34,34 @@ export default function Login() {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <div style={styles.leftPanel}>
-          <h2 style={styles.title}>Entrar</h2>
-          <form onSubmit={handleLogin} style={styles.form}>
-            <div style={styles.inputGroup}>
-              <FaEnvelope style={styles.icon} />
-              <InputField
-                type="email"
-                placeholder="E-mail"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                icon={FaEnvelope}
-                required
-              />
-            </div>
-
-            <div style={styles.inputGroup}>
-              <FaLock style={styles.icon} />
-              <InputField
-                type="password"
-                placeholder="Senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                icon={FaLock}
-                required
-              />
-            </div>
-
-            <button type="submit" style={styles.button} disabled={loading}>
-              {loading ? "Entrando..." : "Entrar"}
-            </button>
-
-            {error && <p style={styles.error}>{error}</p>}
-          </form>
+    <div className="overflow-hidden">
+      <header className="fixed w-full">
+        <div className="flex flex-row-reverse m-5">
+          <ThemeToggle/>
         </div>
+      </header>
+      <div className="w-screen h-screen flex items-center justify-center bg-linear-to-b from-blue-400 to-purple-900">
+        <form onSubmit={handleLogin}>
+          <fieldset className="fieldset bg-base-200 border-none rounded-box w-xs border p-4 shadow-lg">
+            <h2 className="text-center font-medium text-lg pb-4">Gere seu Relatório!</h2>
+            {error && <p className="text-red-500 mt-3 text-center">{error}</p>}
+            <InputEmail onChange={(e) => setEmail(e.target.value)}/>
+            <InputPassword onChange={(e) => setPassword(e.target.value)}/>
+            <button
+              className="btn btn-soft btn-primary border-blue-700 mt-4"
+              disabled={loading}
+              type="submit"
+            >{loading ? <span className="loading loading-spinner"></span> : "Entrar"}</button>
 
-        <div style={styles.rightPanel}>
-          <h2 style={styles.welcome}>Olá, Seja Bem-Vindo!</h2>
-          <p style={styles.text}>
-            Acesse sua conta para gerar seu recado de aula!
-          </p>
-        </div>
+          </fieldset>
+        </form>
       </div>
+      <footer className="footer pb-4 footer-center bg-transparent text-white fixed bottom-0">
+        <aside>
+          <p>Equipe Ctrl+Play Guarapari © {new Date().getFullYear()} - Gerador de Relatórios para Professores</p>
+        </aside>
+      </footer>
     </div>
   );
 }
 
-// ...styles aqui (igual ao que você já tinha)

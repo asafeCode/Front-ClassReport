@@ -2,21 +2,21 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth, AuthProvider } from "./contexts/AuthContext";
 import Login from "./pages/Login";
 import Classes from "./pages/Classes";
+import "./App.css";
 
 function AppRoutes() {
-  const { token } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   return (
     <Routes>
-      {!token ? (
-        <>
-          <Route path="/login" element={<Login />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </>
-      ) : (
+      {isLoggedIn ? (
         <>
           <Route path="/classes" element={<Classes />} />
           <Route path="*" element={<Navigate to="/classes" replace />} />
+        </>) : (
+        <>
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </>
       )}
     </Routes>
