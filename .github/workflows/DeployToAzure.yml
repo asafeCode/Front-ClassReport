@@ -1,4 +1,4 @@
-name: Azure Static Web Apps CI/CD
+name: Azure Static Web Apps CI/CD (OIDC)
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 jobs:
   build_and_deploy_job:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: Build and Deploy Job (OIDC)
     permissions:
        id-token: write
        contents: read
@@ -19,12 +19,16 @@ jobs:
           submodules: true
           lfs: false
 
-      - name: Build And Deploy
-        id: builddeploy
+      - name: Build app
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy to Azure Static Web App (OIDC)
+        id: deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_NICE_SAND_0964A1B0F }}
           action: "upload"
-          app_location: "/" # App source code path
+          app_location: "/"
           skip_api_build: true
-          output_location: "dist" # Built app content directory
+          output_location: "dist"
