@@ -70,7 +70,7 @@ export default function Classes() {
           <ThemeToggle />
           <button
             onClick={handleLogout}
-            className="btn btn-soft btn-error bg-red-500 border-none text-white"
+            className="btn bg-red-500 border-none hover:bg-red-700 shadow-gray-600 shadow-sm text-white "
           >
             Sair
           </button>
@@ -111,7 +111,7 @@ export default function Classes() {
         </ul>
 
         {reportHtml && (
-          <div className="mt-8 bg-gray-50 border border-gray-200 rounded-xl p-5">
+          <div className="mt-8 bg-base-100 border-none rounded-xl p-5">
             <h3 className="text-[#4A00E0] text-lg font-semibold mb-3">Recado Gerado</h3>
             <div
               className="bg-black text-green-400 p-3 rounded-md max-h-72 overflow-y-auto font-mono text-sm whitespace-pre-wrap"
