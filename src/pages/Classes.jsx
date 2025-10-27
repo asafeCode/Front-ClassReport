@@ -14,7 +14,6 @@ export default function Classes() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [reportHtml, setReportHtml] = useState("");
-  const [accessToken] = useState();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export default function Classes() {
     setLoadingReport(classId);
 
     try {
-      const response = generateReport(accessToken, classId);
+      const response = await generateReport(token, classId);
       setSuccess("Recado gerado com sucesso!");
       setReportHtml(response.data);
     } catch (err) {
@@ -93,9 +92,9 @@ export default function Classes() {
             classes.map((c) => (
               <li
                 key={c.id}
-                className="bg-gray-100 hover:bg-gray-200 transition-all p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-3"
+                className="p-4 flex flex-col sm:flex-row justify-between items-center"
               >
-                <span className="font-medium">{c.name}</span>
+                <span className="font-medium text-base-content">{c.name}</span>
                 <button
                   onClick={() => handleGenerateReport(c.id)}
                   disabled={loadingReport === c.id}
@@ -112,14 +111,13 @@ export default function Classes() {
 
         {reportHtml && (
           <div className="mt-8 bg-base-100 border-none rounded-xl p-5">
-            <h3 className="text-[#4A00E0] text-lg font-semibold mb-3">Recado Gerado</h3>
             <div
-              className="bg-black text-green-400 p-3 rounded-md max-h-72 overflow-y-auto font-mono text-sm whitespace-pre-wrap"
+              className="bg-base-300 text-base-content p-3 rounded-md max-h-72 overflow-y-auto font-mono text-sm whitespace-pre-wrap"
               dangerouslySetInnerHTML={{ __html: reportHtml }}
             />
             <button
               onClick={handleCopyToClipboard}
-              className="btn btn-soft btn-primary border-blue-700 px-5"
+              className="btn btn-outline btn-sm btn-accent  mt-3 w-full"
             >
               Copiar Recado
             </button>
