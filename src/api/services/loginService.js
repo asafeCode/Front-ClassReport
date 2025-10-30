@@ -6,5 +6,5 @@ export const login = async (email, password) => {
         password: password,
       });
 
-      return response.data.accessToken;
+      return response.data.access;
 };
