@@ -36,7 +36,7 @@ export default function Classes() {
       setReportHtml(response.data);
     } catch (err) {
       if (err.response) {
-        setError(`Erro: ${err.response.data.message || "400 Bad Request"}`);
+        setError(`Erro: ${err.response.data.message || "Erro ao processar"}`);
       } else {
         setError("Erro ao gerar o recado.");
       }
