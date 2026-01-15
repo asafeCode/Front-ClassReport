@@ -1,16 +1,42 @@
-# React + Vite
+# Front-ClassReport
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend do **sistema de geração de recados para responsáveis**, desenvolvido para o contexto educacional, com foco em produtividade, clareza da informação e integração com backend e serviços de IA.
 
-Currently, two official plugins are available:
+## 📌 Visão Geral
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A aplicação consome uma API backend responsável por consultar aulas do dia, processar dados educacionais e gerar recados automáticos utilizando **LLMs**. O frontend oferece uma interface simples e responsiva para visualização e geração dos recados.
 
-## React Compiler
+## ⚙️ Funcionalidades
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* Visualização das aulas do dia
+* Geração automática de recados para responsáveis
+* Consumo de APIs REST
+* Interface moderna e responsiva
+* Integração com backend que utiliza IA para geração de texto
 
-## Expanding the ESLint configuration
+## 🛠 Tecnologias Utilizadas
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **React**
+* **TypeScript**
+* **Tailwind CSS**
+* **DaisyUI**
+* **Vite**
+* **Consumo de APIs REST**
+
+## 🧱 Estrutura do Projeto
+
+O projeto segue uma organização baseada em responsabilidades, separando componentes, serviços, modelos e contextos, facilitando manutenção, escalabilidade e evolução do código.
+
+## 🔗 Backend
+
+Este frontend consome a API disponível em:
+
+* [https://github.com/asafeCode/Api-ClassReport](https://github.com/asafeCode/Api-ClassReport)
+
+## 🎯 Objetivo do Projeto
+
+Reduzir o esforço manual de professores na comunicação com responsáveis, automatizando a geração de recados a partir dos dados das aulas, com apoio de inteligência artificial.
+
+---
+
+Projeto desenvolvido com foco em aplicação prática, integração com IA e simulação de um ambiente real de uso educacional.
